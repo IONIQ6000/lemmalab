@@ -289,7 +289,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/cur/proof-buddy/proof-buddy-nextjs/src/generated/prisma",
+      "value": "/Users/cur/lemmalab/src/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -303,12 +303,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/cur/proof-buddy/proof-buddy-nextjs/prisma/schema.prisma",
+    "sourceFilePath": "/Users/cur/lemmalab/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../../../prisma",
   "clientVersion": "6.15.0",
@@ -317,6 +316,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": true,
   "inlineDatasources": {
     "db": {
       "url": {
