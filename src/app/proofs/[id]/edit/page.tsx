@@ -66,6 +66,7 @@ export default function EditProofPage() {
   const [dirty, setDirty] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [showReadableDialog, setShowReadableDialog] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const validationByLineNo = useMemo(() => {
     const map = new Map<string, { ok: boolean; messages: string[] }>();
@@ -102,7 +103,12 @@ export default function EditProofPage() {
     async function load() {
       try {
         const res = await fetch(`/api/proofs?id=${params.id}`, { cache: "no-store" });
-        if (!res.ok) throw new Error(await res.text());
+        if (!res.ok) {
+          if (res.status === 403) setError("You don't have permission to edit this proof");
+          else if (res.status === 404) setError("Proof not found");
+          else setError("Failed to load proof");
+          return;
+        }
         const data = await res.json();
         const item = data.item;
         setName(item?.name ?? "");
@@ -117,7 +123,7 @@ export default function EditProofPage() {
         }));
         setLines(mapped);
       } catch (e) {
-        toast.error("Failed to load proof");
+        setError("Failed to load proof");
       } finally {
         setLoading(false);
       }
@@ -276,6 +282,17 @@ export default function EditProofPage() {
   }, [lines]);
 
   if (loading) return <div className="mx-auto max-w-7xl px-6 py-10">Loading…</div>;
+  if (error) {
+    return (
+      <div className="mx-auto max-w-7xl px-6 py-10">
+        <div className="text-center">
+          <h1 className="text-2xl font-semibold mb-4">Access Denied</h1>
+          <p className="text-muted-foreground mb-4">{error}</p>
+          <a href="/proofs" className="inline-flex items-center rounded-md border px-4 py-2 text-sm hover:bg-accent">Back to Proofs</a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-10 space-y-6">

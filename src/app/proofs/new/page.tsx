@@ -67,6 +67,7 @@ export default function NewProofPage() {
   const activeInputRef = useRef<HTMLInputElement>(null);
   const validateBtnRef = useRef<HTMLButtonElement>(null);
   const saveBtnRef = useRef<HTMLButtonElement>(null);
+  const creatingDraftRef = useRef<boolean>(false);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [dirty, setDirty] = useState(false);
 
@@ -464,26 +465,32 @@ export default function NewProofPage() {
                       }
                       setAutoSave(on);
                       if (on && !draftId) {
+                        if (creatingDraftRef.current) return;
+                        creatingDraftRef.current = true;
                         setSaving(true);
-                        const payload = {
-                          name,
-                          premises: premises.split(",").map((s) => s.trim()).filter(Boolean),
-                          conclusion,
-                          lines: lines.map((l) => ({ lineNo: l.lineNo, formula: l.formula, rule: l.rule, refs: (l.refs ?? []).map((s) => String(s).trim()).filter(Boolean), depth: Number(l.depth ?? 0) })),
-                          rules: "tfl_basic",
-                          skipValidation: true,
-                        };
-                        const res = await fetch("/api/proofs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-                        if (res.ok) {
-                          const data = await res.json().catch(() => ({}));
-                          setDraftId(data?.item?.id ?? null);
-                          setSavedVisible(true);
-                          setTimeout(() => setSavedVisible(false), 2500);
-                        } else {
-                          setAutoSave(false);
-                          toast.error("Failed to create draft (sign in?)");
+                        try {
+                          const payload = {
+                            name,
+                            premises: premises.split(",").map((s) => s.trim()).filter(Boolean),
+                            conclusion,
+                            lines: lines.map((l) => ({ lineNo: l.lineNo, formula: l.formula, rule: l.rule, refs: (l.refs ?? []).map((s) => String(s).trim()).filter(Boolean), depth: Number(l.depth ?? 0) })),
+                            rules: "tfl_basic",
+                            skipValidation: true,
+                          };
+                          const res = await fetch("/api/proofs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+                          if (res.ok) {
+                            const data = await res.json().catch(() => ({}));
+                            setDraftId(data?.item?.id ?? null);
+                            setSavedVisible(true);
+                            setTimeout(() => setSavedVisible(false), 2500);
+                          } else {
+                            setAutoSave(false);
+                            toast.error("Failed to create draft (sign in?)");
+                          }
+                        } finally {
+                          creatingDraftRef.current = false;
+                          setSaving(false);
                         }
-                        setSaving(false);
                       }
                     }}
                   />
