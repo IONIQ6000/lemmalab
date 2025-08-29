@@ -109,11 +109,11 @@ export default function EditProofPage() {
         setPremises(item?.premises ?? "");
         setConclusion(item?.conclusion ?? "");
         const mapped: Line[] = (item?.lines ?? []).map((l: any) => ({
-          lineNo: l.lineNo,
+          lineNo: String(l.lineNo),
           formula: l.formula ?? "",
           rule: l.rule ?? "",
-          refs: [],
-          depth: 0,
+          refs: Array.isArray(l.refs) ? l.refs.map((s: any) => String(s)) : [],
+          depth: Number(l.depth ?? 0),
         }));
         setLines(mapped);
       } catch (e) {
@@ -143,6 +143,7 @@ export default function EditProofPage() {
             formula: l.formula,
             rule: l.rule,
             refs: (l.refs ?? []).map((s) => String(s).trim()).filter(Boolean),
+            depth: Number(l.depth ?? 0),
           })),
           skipValidation: true,
         };
@@ -241,6 +242,7 @@ export default function EditProofPage() {
           formula: l.formula,
           rule: l.rule,
           refs: (l.refs ?? []).map((s) => String(s).trim()).filter(Boolean),
+          depth: Number(l.depth ?? 0),
         })),
       };
       const res = await fetch(`/api/proofs?id=${params.id}`, {

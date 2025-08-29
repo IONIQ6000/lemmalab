@@ -183,6 +183,7 @@ export default function NewProofPage() {
             formula: l.formula,
             rule: l.rule,
             refs: (l.refs ?? []).map((s) => String(s).trim()).filter(Boolean),
+            depth: Number(l.depth ?? 0),
           })),
           skipValidation: true,
         };
@@ -406,7 +407,7 @@ export default function NewProofPage() {
                       body: JSON.stringify({
                         premises: premises.split(",").map((s) => s.trim()).filter(Boolean),
                         conclusion,
-                        lines: lines.map((l) => ({ lineNo: l.lineNo, formula: l.formula, rule: l.rule, refs: (l.refs ?? []).map((s) => String(s).trim()).filter(Boolean) })),
+                        lines: lines.map((l) => ({ lineNo: l.lineNo, formula: l.formula, rule: l.rule, refs: (l.refs ?? []).map((s) => String(s).trim()).filter(Boolean), depth: Number(l.depth ?? 0) })),
                         rules: "tfl_basic",
                       }),
                     });
@@ -468,7 +469,7 @@ export default function NewProofPage() {
                           name,
                           premises: premises.split(",").map((s) => s.trim()).filter(Boolean),
                           conclusion,
-                          lines: lines.map((l) => ({ lineNo: l.lineNo, formula: l.formula, rule: l.rule, refs: (l.refs ?? []).map((s) => String(s).trim()).filter(Boolean) })),
+                          lines: lines.map((l) => ({ lineNo: l.lineNo, formula: l.formula, rule: l.rule, refs: (l.refs ?? []).map((s) => String(s).trim()).filter(Boolean), depth: Number(l.depth ?? 0) })),
                           rules: "tfl_basic",
                           skipValidation: true,
                         };
@@ -511,6 +512,7 @@ export default function NewProofPage() {
                       formula: l.formula,
                       rule: l.rule,
                       refs: (l.refs ?? []).map((s) => String(s).trim()).filter(Boolean),
+                      depth: Number(l.depth ?? 0),
                     })),
                     rules: "tfl_basic",
                   };
