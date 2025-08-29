@@ -1,0 +1,12 @@
+{
+  "name": "LemmaLab",
+  "short_name": "LemmaLab",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "48x48", "type": "image/svg+xml" }
+  ],
+  "theme_color": "#0a0a0a",
+  "background_color": "#0a0a0a",
+  "display": "standalone"
+}
+
+

@@ -1,0 +1,208 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String            @id @default(cuid())
+  email          String            @unique
+  username       String            @unique
+  hashedPassword String
+  isStudent      Boolean           @default(false)
+  isInstructor   Boolean           @default(false)
+  isAdmin        Boolean           @default(false)
+  isActive       Boolean           @default(true)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  accounts       Account[]
+  instructor     Instructor?
+  proofs         Proof[]           @relation("UserProofs")
+  responses      ResponseTracker[]
+  sessions       Session[]
+  student        Student?
+}
+
+model Student {
+  userId    String                   @id
+  imageUrl  String?
+  mobile    String?
+  bio       String?
+  dob       DateTime?
+  delays    AssignmentDelay[]
+  user      User                     @relation(fields: [userId], references: [id])
+  solutions StudentProblemSolution[]
+  courses   Course[]                 @relation("CourseStudents")
+}
+
+model Instructor {
+  userId      String       @id
+  imageUrl    String?
+  mobile      String?
+  bio         String?
+  dob         DateTime?
+  assignments Assignment[]
+  courses     Course[]
+  user        User         @relation(fields: [userId], references: [id])
+}
+
+model Proof {
+  id              String                  @id @default(cuid())
+  name            String?
+  rules           String                  @default("tfl_basic")
+  premises        String?
+  conclusion      String
+  createdById     String
+  complete        Boolean                 @default(false)
+  lemmasAllowed   Boolean                 @default(false)
+  disproofString  String?
+  createdAt       DateTime                @default(now())
+  isDeleted       Boolean                 @default(false)
+  problem         Problem?
+  createdBy       User                    @relation("UserProofs", fields: [createdById], references: [id])
+  lines           ProofLine[]
+  responses       ResponseTracker[]
+  studentSolution StudentProblemSolution?
+}
+
+model ProofLine {
+  id       String   @id @default(cuid())
+  proofId  String
+  lineNo   String
+  formula  String?
+  rule     String?
+  order    Int?
+  comment  String?
+  response String?
+  depth    Int      @default(0)
+  refs     String[]
+  proof    Proof    @relation(fields: [proofId], references: [id])
+}
+
+model Problem {
+  id              String                   @id @default(cuid())
+  question        String                   @default("Solve the following problem")
+  point           Decimal
+  targetSteps     Int
+  lostPoints      Int
+  proofId         String                   @unique
+  lemmasAllowed   Boolean                  @default(false)
+  showTargetSteps Boolean                  @default(true)
+  proof           Proof                    @relation(fields: [proofId], references: [id])
+  solutions       StudentProblemSolution[]
+  assignments     Assignment[]             @relation("AssignmentProblems")
+}
+
+model Course {
+  id           String       @id @default(cuid())
+  title        String
+  term         String
+  section      Int
+  instructorId String
+  assignments  Assignment[]
+  instructor   Instructor   @relation(fields: [instructorId], references: [userId])
+  students     Student[]    @relation("CourseStudents")
+}
+
+model Assignment {
+  id                  String                   @id @default(cuid())
+  title               String?
+  createdById         String?
+  createdOn           DateTime                 @default(now())
+  startDate           DateTime?
+  dueBy               DateTime
+  resubmissions       Int?                     @default(0)
+  courseId            String
+  isSubmitted         Boolean                  @default(false)
+  isLateSubmitted     Boolean                  @default(false)
+  isLateSubmittedDate DateTime?
+  course              Course                   @relation(fields: [courseId], references: [id])
+  createdBy           Instructor?              @relation(fields: [createdById], references: [userId])
+  delays              AssignmentDelay[]
+  solutions           StudentProblemSolution[]
+  problems            Problem[]                @relation("AssignmentProblems")
+}
+
+model StudentProblemSolution {
+  id           String     @id @default(cuid())
+  studentId    String
+  assignmentId String
+  problemId    String
+  proofId      String     @unique
+  submittedOn  DateTime?  @default(now())
+  grade        Decimal?
+  assignment   Assignment @relation(fields: [assignmentId], references: [id])
+  problem      Problem    @relation(fields: [problemId], references: [id])
+  proof        Proof      @relation(fields: [proofId], references: [id])
+  student      Student    @relation(fields: [studentId], references: [userId])
+
+  @@unique([studentId, assignmentId, problemId, proofId])
+}
+
+model Feedback {
+  id      String  @id @default(cuid())
+  name    String
+  email   String
+  subject String
+  details String
+  attach  String?
+}
+
+model ResponseTracker {
+  id           String @id @default(cuid())
+  proofId      String
+  responseType Int?
+  responseMsg  String @default("")
+  userId       String
+  proof        Proof  @relation(fields: [proofId], references: [id])
+  user         User   @relation(fields: [userId], references: [id])
+}
+
+model AssignmentDelay {
+  id             String     @id @default(cuid())
+  assignmentId   String
+  studentId      String
+  dueDate        DateTime?
+  submissionDate DateTime?
+  status         String     @default("pending")
+  assignment     Assignment @relation(fields: [assignmentId], references: [id])
+  student        Student    @relation(fields: [studentId], references: [userId])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}

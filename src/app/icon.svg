@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="LemmaLab">
+  <g fill="none" stroke="#111" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 12 H38"/>
+    <path d="M12 36 L24 14 L36 36"/>
+    <path d="M16 39 H32" opacity=".6"/>
+  </g>
+</svg>
+
