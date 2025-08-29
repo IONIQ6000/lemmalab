@@ -5,7 +5,6 @@ A modern proof editor and course platform built with Next.js, featuring a monoch
 ## Features
 
 - **Proof Editor**: Interactive proof creation and editing with real-time validation
-- **Course Management**: Create and manage courses with assignments
 - **User Authentication**: Secure sign-in/sign-up with NextAuth.js
 - **Database Integration**: PostgreSQL with Prisma ORM
 - **Modern UI**: Built with Radix UI components and Tailwind CSS
