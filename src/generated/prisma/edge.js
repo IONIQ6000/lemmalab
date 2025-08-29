@@ -289,7 +289,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/dark-moon/lemmalab/src/generated/prisma",
+      "value": "/Users/crystalsatellite/lemmalab/src/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -298,12 +298,12 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "rhel-openssl-3.0.x",
+        "value": "darwin-arm64",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/dark-moon/lemmalab/prisma/schema.prisma",
+    "sourceFilePath": "/Users/crystalsatellite/lemmalab/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -316,7 +316,6 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": true,
   "inlineDatasources": {
     "db": {
       "url": {

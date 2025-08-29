@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Plus, Trash2, FileText, ArrowLeft, ArrowRight } from "lucide-react";
+import { Plus, Trash2, FileText } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
@@ -66,6 +66,16 @@ export default function EditProofPage() {
   const [dirty, setDirty] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [showReadableDialog, setShowReadableDialog] = useState(false);
+
+  const validationByLineNo = useMemo(() => {
+    const map = new Map<string, { ok: boolean; messages: string[] }>();
+    if (result?.lines) {
+      for (const l of result.lines as Array<{ lineNo: string; ok: boolean; messages: string[] }>) {
+        map.set(String(l.lineNo), { ok: l.ok, messages: l.messages });
+      }
+    }
+    return map;
+  }, [result]);
 
   function insertSymbol(symbol: string) {
     if (activeInputRef.current) {
@@ -250,8 +260,6 @@ export default function EditProofPage() {
     }
   }
 
-  if (loading) return <div className="mx-auto max-w-7xl px-6 py-10">Loading…</div>;
-
   const issues = useMemo(() => {
     const list: string[] = [];
     lines.forEach((l, idx) => {
@@ -264,6 +272,8 @@ export default function EditProofPage() {
     });
     return list;
   }, [lines]);
+
+  if (loading) return <div className="mx-auto max-w-7xl px-6 py-10">Loading…</div>;
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-10 space-y-6">
@@ -333,34 +343,7 @@ export default function EditProofPage() {
         <KeyLegend onSymbolInsert={insertSymbol} activeInputRef={activeInputRef} />
         
         <div className="bg-background/50 border rounded-lg p-4">
-          <div className="mb-3">
-            {lines.length > 0 && (
-              <div className="text-sm">
-                {(() => {
-                  const issues: string[] = [];
-                  lines.forEach((l, idx) => {
-                    if (!String(l.formula ?? "").trim()) issues.push(`#${l.lineNo || idx + 1}: Missing formula`);
-                    const req = getRefCount(l.rule);
-                    if (req > 0) {
-                      const have = (l.refs ?? []).filter((x) => String(x ?? "").trim()).length;
-                      if (have < req) issues.push(`#${l.lineNo || idx + 1}: ${have}/${req} references provided`);
-                    }
-                  });
-                  if (issues.length === 0) return null;
-                  return (
-                    <div className="rounded-md border border-yellow-300/50 bg-yellow-50/60 text-yellow-900 p-2">
-                      <div className="font-medium mb-1">Issues</div>
-                      <ul className="list-disc ml-5 space-y-0.5">
-                        {issues.map((it, i) => (
-                          <li key={i}>{it}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  );
-                })()}
-              </div>
-            )}
-          </div>
+          <div className="mb-3" />
           <div className="flex items-center justify-between mb-4">
             <div className="space-y-1">
               <h3 className="text-sm font-semibold text-foreground">Actions</h3>
@@ -463,10 +446,11 @@ export default function EditProofPage() {
               <tbody>
                 {lines.map((line, i) => {
                   const refCount = getRefCount(line.rule);
+                  const v = validationByLineNo.get(String(line.lineNo));
                   return (
                     <tr key={i} className="align-middle border-t" style={{ transform: `translateX(${line.depth * 16}px)` }}>
                       <td className="py-1 px-2 w-24">
-                        <Input className="h-8 px-2 py-1 text-xs w-16 min-w-16" value={line.lineNo} onChange={(e) => setLines((prev) => prev.map((l, idx) => (idx === i ? { ...l, lineNo: e.target.value } : l)))} />
+                        <Input className="h-8 px-2 py-1 text-xs w-16 min-w-16" placeholder="#" value={line.lineNo} onChange={(e) => setLines((prev) => prev.map((l, idx) => (idx === i ? { ...l, lineNo: e.target.value } : l)))} />
                       </td>
                       <td className="py-1 px-2">
                         <div className="flex items-center gap-1">
@@ -485,9 +469,10 @@ export default function EditProofPage() {
                         </div>
                       </td>
                       <td className="py-1 px-2">
-                        <Input 
-                          className="h-8 px-2 py-1 text-xs w-full min-w-[16rem]" 
-                          value={line.formula} 
+                        <Input
+                          className="h-8 px-2 py-1 text-xs w-full min-w-[16rem]"
+                          placeholder="Formula"
+                          value={line.formula}
                           onChange={(e) => setLines((prev) => prev.map((l, idx) => (idx === i ? { ...l, formula: e.target.value } : l)))}
                           onFocus={(e) => { activeInputRef.current = e.target; }}
                         />
@@ -558,9 +543,15 @@ export default function EditProofPage() {
                       <td className="py-1 px-2">
                         <div className="flex items-center gap-2">
                           {Array.from({ length: refCount }).map((_, j) => (
-                            <Input key={j} className="h-8 px-2 py-1 text-xs w-12" placeholder={`R${j + 1}`} value={line.refs[j] ?? ""} onChange={(e) => setLines((prev) => prev.map((l, idx) => {
-                              if (idx !== i) return l; const refs = [...(l.refs ?? [])]; refs[j] = e.target.value; return { ...l, refs };
-                            }))} />
+                            <Input
+                              key={j}
+                              className="h-8 px-2 py-1 text-xs w-12"
+                              placeholder={`R${j + 1}`}
+                              value={line.refs[j] ?? ""}
+                              onChange={(e) => setLines((prev) => prev.map((l, idx) => {
+                                if (idx !== i) return l; const refs = [...(l.refs ?? [])]; refs[j] = e.target.value; return { ...l, refs };
+                              }))}
+                            />
                           ))}
                           <span className="text-[10px] text-muted-foreground">{Math.min((line.refs ?? []).filter((x) => String(x ?? "").trim()).length, refCount)}/{refCount}</span>
                         </div>
@@ -576,18 +567,6 @@ export default function EditProofPage() {
                             </Tooltip>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button variant="outline" size="icon" onClick={() => pullDepth(i)} aria-label="Pull out of subproof"><ArrowLeft /></Button>
-                              </TooltipTrigger>
-                              <TooltipContent>Pull out of subproof</TooltipContent>
-                            </Tooltip>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button variant="outline" size="icon" onClick={() => pushDepth(i)} aria-label="Push into subproof"><ArrowRight /></Button>
-                              </TooltipTrigger>
-                              <TooltipContent>Push into subproof</TooltipContent>
-                            </Tooltip>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
                                 <Button variant="outline" size="icon" onClick={() => deleteLineAt(i)} aria-label="Delete row"><Trash2 /></Button>
                               </TooltipTrigger>
                               <TooltipContent>Delete row</TooltipContent>
@@ -596,7 +575,9 @@ export default function EditProofPage() {
                         </TooltipProvider>
                       </td>
                       <td className="py-1 px-2">
-                        <div className="text-xs text-muted-foreground">{/** validation placeholder */}</div>
+                        <div className={`text-xs ${v?.ok ? "text-green-500" : v ? "text-red-500" : "text-muted-foreground"}`}>
+                          {v ? (v.ok ? "OK" : v.messages.join("; ")) : ""}
+                        </div>
                       </td>
                     </tr>
                   );

@@ -8,6 +8,7 @@ import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetBody }
 import { HelpCircle, Keyboard, BookOpen, Layers, Settings } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { BrowserExtensionSafe } from "@/components/browser-extension-safe";
 
 const links = [
   { href: "/", label: "Home" },
@@ -20,8 +21,9 @@ export function SiteHeader() {
   const pathname = usePathname();
   const { status } = useSession();
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-6">
+    <BrowserExtensionSafe>
+      <header className="sticky top-0 z-40 border-b bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-6">
         <Link href="/" className="font-semibold tracking-tight flex items-center gap-3" aria-label="LemmaLab home">
           <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border bg-card">
             <Logo className="h-7 w-7" />
@@ -245,6 +247,7 @@ export function SiteHeader() {
         </nav>
       </div>
     </header>
+    </BrowserExtensionSafe>
   );
 }
 

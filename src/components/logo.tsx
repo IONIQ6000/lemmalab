@@ -18,10 +18,11 @@ export function Logo({ className, title = "LemmaLab", ...props }: LogoProps) {
       role="img"
       aria-labelledby={titleId}
       className={cn("block", className)}
+      suppressHydrationWarning
       {...props}
     >
       <title id={titleId}>{title}</title>
-      <g fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+      <g fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" suppressHydrationWarning>
         {/* Top cap */}
         <path d="M10 12 H38" />
         {/* Inverted arch (suggestive of ∀) */}

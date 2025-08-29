@@ -13,13 +13,23 @@ type Proof = {
   lines: Array<{ id: string; lineNo: string; formula: string | null; rule: string | null; depth?: number; refs?: string[] }>;
 };
 
-export default function ProofDetailPage({ params }: { params: { id: string } }) {
+export default function ProofDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { data: session, status } = useSession();
   const [proof, setProof] = useState<Proof | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [proofId, setProofId] = useState<string | null>(null);
 
   useEffect(() => {
+    const getParams = async () => {
+      const resolvedParams = await params;
+      setProofId(resolvedParams.id);
+    };
+    getParams();
+  }, [params]);
+
+  useEffect(() => {
+    if (!proofId) return;
     if (status === "loading") return;
     if (status === "unauthenticated") {
       setError("Please sign in to view this proof");
@@ -29,7 +39,7 @@ export default function ProofDetailPage({ params }: { params: { id: string } }) 
 
     const fetchProof = async () => {
       try {
-        const res = await fetch(`/api/proofs?id=${params.id}`, { cache: "no-store" });
+        const res = await fetch(`/api/proofs?id=${proofId}`, { cache: "no-store" });
         if (!res.ok) {
           if (res.status === 403) {
             setError("You don't have permission to view this proof");
@@ -50,7 +60,7 @@ export default function ProofDetailPage({ params }: { params: { id: string } }) 
     };
 
     fetchProof();
-  }, [params.id, status]);
+  }, [proofId, status]);
 
   if (loading) {
     return <div className="mx-auto max-w-4xl px-6 py-10">Loading...</div>;
