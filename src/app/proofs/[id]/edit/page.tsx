@@ -319,7 +319,7 @@ export default function EditProofPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-10 space-y-6">
+    <div className="mx-auto w-full max-w-7xl px-3 sm:px-6 py-6 sm:py-10 space-y-6">
       <h1 className="text-2xl font-semibold">Edit Proof</h1>
       <div className="bg-gradient-to-br from-muted/20 to-muted/10 border rounded-xl p-6 space-y-6">
         <div className="space-y-1">
@@ -327,7 +327,7 @@ export default function EditProofPage() {
           <p className="text-sm text-muted-foreground">Define the basic information for your logical proof</p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-medium text-foreground">
               Proof Name
@@ -473,8 +473,8 @@ export default function EditProofPage() {
           </div>
         </div>
         <div className="bg-background/50 border rounded-lg overflow-hidden">
-          <div className="w-full overflow-auto">
-            <table className="w-full min-w-full table-auto border-separate border-spacing-x-2 border-spacing-y-0 text-sm">
+          <div className="w-full overflow-x-auto">
+            <table className="w-full min-w-[960px] table-auto border-separate border-spacing-x-2 border-spacing-y-0 text-sm">
               <thead>
                 <tr className="text-muted-foreground">
                   <th className="w-24 text-left font-medium py-2 px-2">#</th>

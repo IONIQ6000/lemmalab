@@ -49,8 +49,8 @@ export function ProofsListClient({ items }: ProofsListClientProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1 max-w-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+        <div className="relative flex-1 w-full sm:max-w-sm">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search proofs..."
@@ -59,7 +59,7 @@ export function ProofsListClient({ items }: ProofsListClientProps) {
             className="pl-10"
           />
         </div>
-        <Badge variant="secondary">
+        <Badge variant="secondary" className="w-fit">
           {filteredItems.length} of {items.length} proofs
         </Badge>
       </div>
@@ -68,7 +68,7 @@ export function ProofsListClient({ items }: ProofsListClientProps) {
         {filteredItems.map((item) => (
           <Card key={item.id} className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <CardTitle className="text-lg mb-1">
                     {item.name || `Proof ${item.id.slice(0, 8)}`}
@@ -77,7 +77,7 @@ export function ProofsListClient({ items }: ProofsListClientProps) {
                     {item.conclusion}
                   </p>
                 </div>
-                <div className="flex items-center gap-2 ml-4">
+                <div className="flex items-center gap-2 sm:ml-4">
                   <Link href={`/proofs/${item.id}`}>
                     <Button variant="outline" size="sm">
                       <Eye className="h-4 w-4 mr-1" />

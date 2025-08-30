@@ -5,16 +5,16 @@ import { ArrowRight, Keyboard, Layers, ShieldCheck, Sparkles } from "lucide-reac
 export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <main className="mx-auto max-w-6xl px-6 py-16 space-y-16">
+      <main className="mx-auto w-full max-w-6xl px-4 sm:px-6 py-12 sm:py-16 space-y-12 sm:space-y-16">
         {/* Hero */}
         <section className="flex flex-col gap-6">
-          <div className="flex items-center gap-6">
-            <span className="inline-flex h-20 w-20 md:h-24 md:w-24 items-center justify-center rounded-md border">
-              <Logo className="h-16 w-16 md:h-20 md:w-20" />
+          <div className="flex items-center gap-4 sm:gap-6">
+            <span className="inline-flex h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 items-center justify-center rounded-md border">
+              <Logo className="h-12 w-12 sm:h-16 sm:w-16 md:h-20 md:w-20" />
             </span>
-            <div>
-              <h1 className="text-4xl md:text-6xl font-semibold tracking-tight">LemmaLab</h1>
-              <p className="text-sm md:text-base text-muted-foreground mt-1">A clean, distraction‑free proof editor.</p>
+            <div className="min-w-0">
+              <h1 className="text-3xl sm:text-4xl md:text-6xl font-semibold tracking-tight">LemmaLab</h1>
+              <p className="text-xs sm:text-sm md:text-base text-muted-foreground mt-1">A clean, distraction‑free proof editor.</p>
             </div>
           </div>
           <p className="text-muted-foreground max-w-2xl">
@@ -37,7 +37,7 @@ export default function Home() {
         </section>
 
         {/* Features */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
           <div className="rounded-lg border bg-card p-6">
             <div className="flex items-center gap-2 text-sm font-medium mb-2"><Sparkles className="h-4 w-4" /> Easy editing</div>
             <p className="text-sm text-muted-foreground">

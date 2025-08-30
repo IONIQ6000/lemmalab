@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useSession, signOut } from "next-auth/react";
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetBody } from "@/components/ui/sheet";
-import { HelpCircle, Keyboard, BookOpen, Layers, Settings, X } from "lucide-react";
+import { HelpCircle, Keyboard, BookOpen, Layers, Settings, X, Menu } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { BrowserExtensionSafe } from "@/components/browser-extension-safe";
@@ -20,17 +21,75 @@ const links = [
 export function SiteHeader() {
   const pathname = usePathname();
   const { status } = useSession();
+  const [mobileOpen, setMobileOpen] = useState(false);
   return (
     <BrowserExtensionSafe className="fixed top-0 left-0 right-0 z-50 w-full">
       <header className="w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-6">
-        <Link href="/" className="font-semibold tracking-tight flex items-center gap-3" aria-label="LemmaLab home">
+        <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-3 sm:px-6">
+        <Link href="/" className="font-semibold tracking-tight flex items-center gap-3 shrink-0" aria-label="LemmaLab home">
           <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border bg-card">
             <Logo className="h-7 w-7" />
           </span>
-          <span className="text-base">LemmaLab</span>
+          <span className="text-base hidden sm:inline">LemmaLab</span>
         </Link>
-        <nav className="ml-auto flex items-center gap-2 text-sm">
+        <nav className="ml-auto flex items-center gap-2 text-sm overflow-x-auto sm:overflow-visible">
+          {/* Mobile menu trigger */}
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetTrigger aria-label="Open menu" className="inline-flex sm:hidden items-center justify-center h-9 w-9 rounded-full border hover:bg-accent">
+              <Menu className="h-4 w-4" />
+            </SheetTrigger>
+            <SheetContent side="left" className="w-full sm:w-80">
+              <SheetHeader>
+                <div className="flex items-center justify-between">
+                  <SheetTitle className="text-base">Menu</SheetTitle>
+                  <button
+                    onClick={() => setMobileOpen(false)}
+                    className="inline-flex items-center justify-center h-8 w-8 rounded-full hover:bg-accent transition-colors"
+                    aria-label="Close menu"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              </SheetHeader>
+              <SheetBody>
+                <div className="flex flex-col gap-2">
+                  {links
+                    .filter((l) => l.href !== "/courses" && l.href !== "/assignments")
+                    .map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className={cn(
+                          "px-3 py-2 rounded-md text-foreground hover:bg-accent border",
+                          pathname === link.href && "bg-accent"
+                        )}
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  <div className="flex items-center gap-2 pt-2">
+                    {status === "authenticated" ? (
+                      <button
+                        onClick={() => { setMobileOpen(false); signOut({ callbackUrl: "/" }); }}
+                        className="inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:bg-accent flex-1"
+                      >
+                        Sign out
+                      </button>
+                    ) : (
+                      <Link
+                        href="/sign-in"
+                        className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 flex-1"
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        Sign in
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              </SheetBody>
+            </SheetContent>
+          </Sheet>
           <TooltipProvider delayDuration={200}>
           {links
             .filter((l) => l.href !== "/courses" && l.href !== "/assignments")
@@ -39,7 +98,7 @@ export function SiteHeader() {
               key={link.href}
               href={link.href}
               className={cn(
-                "px-3 py-1.5 rounded-full text-muted-foreground transition-colors hover:text-foreground hover:bg-accent",
+                "hidden sm:inline-flex px-3 py-1.5 rounded-full text-muted-foreground transition-colors hover:text-foreground hover:bg-accent",
                 pathname === link.href && "text-foreground bg-accent"
               )}
             >
@@ -244,7 +303,7 @@ export function SiteHeader() {
               </SheetBody>
             </SheetContent>
           </Sheet>
-          <div className="ml-1 pl-2 border-l flex items-center gap-2">
+          <div className="ml-1 pl-2 border-l hidden sm:flex items-center gap-2">
             {status === "authenticated" ? (
               <button 
                 className="inline-flex items-center justify-center rounded-full border px-4 py-2 text-sm font-medium transition-colors hover:bg-accent"

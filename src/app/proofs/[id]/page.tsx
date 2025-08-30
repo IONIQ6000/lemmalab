@@ -80,13 +80,13 @@ export default function ProofDetailPage({ params }: { params: Promise<{ id: stri
     );
   }
   return (
-    <div className="mx-auto max-w-6xl px-6 py-10 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 py-8 sm:py-10 space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">{proof.name ?? `Proof ${proof.id.slice(0, 6)}`}</h1>
           <div className="text-sm text-muted-foreground">Rules: {proof.rules}</div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <a href={`/proofs/${proof.id}/edit`} className="inline-flex items-center rounded-md border px-3 py-1.5 text-sm hover:bg-accent">Edit</a>
           <DeleteProofButton proofId={proof.id} proofName={proof.name} />
           <a href="/proofs" className="inline-flex items-center rounded-md px-3 py-1.5 text-sm hover:bg-accent">Back</a>
@@ -108,15 +108,15 @@ export default function ProofDetailPage({ params }: { params: Promise<{ id: stri
         </div>
       </div>
 
-      <div className="rounded-lg border overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="rounded-lg border overflow-x-auto">
+        <table className="w-full min-w-[720px] text-sm">
           <thead>
             <tr className="border-b">
-              <th className="text-left p-3 w-20">#</th>
-              <th className="text-left p-3 w-24">Subproof</th>
+              <th className="text-left p-3 w-16">#</th>
+              <th className="text-left p-3 w-20">Subproof</th>
               <th className="text-left p-3">Formula</th>
-              <th className="text-left p-3 w-64">Rule</th>
-              <th className="text-left p-3 w-40">Refs</th>
+              <th className="text-left p-3 w-56 hidden sm:table-cell">Rule</th>
+              <th className="text-left p-3 w-36 hidden sm:table-cell">Refs</th>
             </tr>
           </thead>
           <tbody>
@@ -137,8 +137,8 @@ export default function ProofDetailPage({ params }: { params: Promise<{ id: stri
                   <span className="text-xs text-muted-foreground ml-1">{Number(l.depth ?? 0)}</span>
                 </td>
                 <td className="p-3 whitespace-pre">{" ".repeat(Number(l.depth ?? 0) * 2)}{l.formula ?? ""}</td>
-                <td className="p-3">{l.rule ?? ""}</td>
-                <td className="p-3">{(l.refs ?? []).join(", ")}</td>
+                <td className="p-3 hidden sm:table-cell">{l.rule ?? ""}</td>
+                <td className="p-3 hidden sm:table-cell">{(l.refs ?? []).join(", ")}</td>
               </tr>
             ))}
           </tbody>
