@@ -66,6 +66,8 @@ export default function EditProofPage() {
   const [dirty, setDirty] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [showReadableDialog, setShowReadableDialog] = useState(false);
+  const [showValidationModal, setShowValidationModal] = useState(false);
+  const [pendingSave, setPendingSave] = useState<(() => void) | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const validationByLineNo = useMemo(() => {
@@ -232,7 +234,7 @@ export default function EditProofPage() {
     setLines((prev) => prev.map((l, i) => (i === index ? { ...l, depth: Math.max(0, l.depth - 1) } : l)));
   }
 
-  async function save() {
+  async function save(skipValidation = false) {
     if (!name.trim()) {
       toast.error("Please enter a proof name before saving");
       return;
@@ -250,7 +252,29 @@ export default function EditProofPage() {
           refs: (l.refs ?? []).map((s) => String(s).trim()).filter(Boolean),
           depth: Number(l.depth ?? 0),
         })),
+        skipValidation,
       };
+      
+      if (!skipValidation) {
+        const check = await fetch("/api/proof/validate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        let validation: any = { ok: false };
+        try {
+          validation = await check.json();
+        } catch {
+          validation = { ok: false };
+        }
+        if (!validation.ok) {
+          setResult(validation);
+          setPendingSave(() => () => save(true));
+          setShowValidationModal(true);
+          return;
+        }
+      }
+      
       const res = await fetch(`/api/proofs?id=${params.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -444,7 +468,7 @@ export default function EditProofPage() {
                     } catch { toast.error("Invalid response from server"); }
                   }
                 }} disabled={!lines.every((l) => { const req = getRefCount(l.rule); if (!req) return true; const r = l.refs ?? []; if (r.length < req) return false; for (let i=0;i<req;i++){ if (!String(r[i] ?? "").trim()) return false; } return true; })} title={!lines.every((l) => { const req = getRefCount(l.rule); if (!req) return true; const r = l.refs ?? []; if (r.length < req) return false; for (let i=0;i<req;i++){ if (!String(r[i] ?? "").trim()) return false; } return true; }) ? "Complete rule references before validating" : undefined}>Validate</Button>
-                <Button ref={saveBtnRef} onClick={save} className="h-9" disabled={!lines.every((l) => { const req = getRefCount(l.rule); if (!req) return true; const r = l.refs ?? []; if (r.length < req) return false; for (let i=0;i<req;i++){ if (!String(r[i] ?? "").trim()) return false; } return true; })} title={!lines.every((l) => { const req = getRefCount(l.rule); if (!req) return true; const r = l.refs ?? []; if (r.length < req) return false; for (let i=0;i<req;i++){ if (!String(r[i] ?? "").trim()) return false; } return true; }) ? "Complete rule references before saving" : undefined}>Save Changes</Button>
+                <Button ref={saveBtnRef} onClick={() => save()} className="h-9" disabled={!lines.every((l) => { const req = getRefCount(l.rule); if (!req) return true; const r = l.refs ?? []; if (r.length < req) return false; for (let i=0;i<req;i++){ if (!String(r[i] ?? "").trim()) return false; } return true; })} title={!lines.every((l) => { const req = getRefCount(l.rule); if (!req) return true; const r = l.refs ?? []; if (r.length < req) return false; for (let i=0;i<req;i++){ if (!String(r[i] ?? "").trim()) return false; } return true; }) ? "Complete rule references before saving" : undefined}>Save Changes</Button>
               </div>
           </div>
         </div>
@@ -645,6 +669,51 @@ export default function EditProofPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowReadableDialog(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Validation Modal */}
+      <Dialog open={showValidationModal} onOpenChange={setShowValidationModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Validation Failed</DialogTitle>
+            <DialogDescription>
+              Your proof doesn't pass validation. You can still save it as a draft, but it may contain logical errors.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="rounded-md border border-destructive/20 bg-destructive/5 p-4">
+              <h4 className="font-medium text-destructive mb-2">Validation Issues:</h4>
+              <ul className="text-sm text-destructive/80 space-y-1">
+                {result?.lines?.filter((l: any) => !l.ok).map((l: any, idx: number) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <span className="font-mono text-xs">#{l.lineNo}:</span>
+                    <span>{l.messages?.join(", ") || "Invalid"}</span>
+                  </li>
+                )) || <li>Unknown validation errors</li>}
+              </ul>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Do you want to save this proof anyway? You can return to edit it later.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowValidationModal(false)}>
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={() => {
+                setShowValidationModal(false);
+                if (pendingSave) {
+                  pendingSave();
+                  setPendingSave(null);
+                }
+              }}
+            >
+              Save Anyway
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

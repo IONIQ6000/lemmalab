@@ -64,6 +64,8 @@ export default function NewProofPage() {
   const [savedVisible, setSavedVisible] = useState(false);
   const [showRestartDialog, setShowRestartDialog] = useState(false);
   const [showReadableDialog, setShowReadableDialog] = useState(false);
+  const [showValidationModal, setShowValidationModal] = useState(false);
+  const [pendingSave, setPendingSave] = useState<(() => void) | null>(null);
   const activeInputRef = useRef<HTMLInputElement>(null);
   const validateBtnRef = useRef<HTMLButtonElement>(null);
   const saveBtnRef = useRef<HTMLButtonElement>(null);
@@ -242,6 +244,74 @@ export default function NewProofPage() {
     });
     return list;
   }, [lines]);
+
+  async function performSave(skipValidation = false) {
+    if (!name.trim()) {
+      toast.error("Please enter a proof name before saving");
+      return;
+    }
+    if (status !== "authenticated") {
+      toast.error("Please sign in to save proofs");
+      window.location.href = "/sign-in?callbackUrl=/proofs/new";
+      return;
+    }
+    const payload = {
+      name,
+      premises: premises.split(",").map((s) => s.trim()).filter(Boolean),
+      conclusion,
+      lines: lines.map((l) => ({
+        lineNo: l.lineNo,
+        formula: l.formula,
+        rule: l.rule,
+        refs: (l.refs ?? []).map((s) => String(s).trim()).filter(Boolean),
+        depth: Number(l.depth ?? 0),
+      })),
+      rules: "tfl_basic",
+      skipValidation,
+    };
+    
+    if (!skipValidation) {
+      const check = await fetch("/api/proof/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      let validation: any = { ok: false };
+      try {
+        validation = await check.json();
+      } catch {
+        validation = { ok: false };
+      }
+      if (!validation.ok) {
+        setResult(validation);
+        setPendingSave(() => () => performSave(true));
+        setShowValidationModal(true);
+        return;
+      }
+    }
+    
+    const save = await fetch("/api/proofs", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (save.ok) {
+      try {
+        const data = await save.json();
+        setDirty(false);
+        setLastSavedAt(new Date());
+        window.location.href = `/proofs/${data.item.id}`;
+      } catch {
+        toast.warning("Saved, but response was invalid");
+      }
+    } else if (save.status === 401) {
+      toast.error("Please sign in to save proofs");
+      window.location.href = "/sign-in?callbackUrl=/proofs/new";
+    } else {
+      const err = await save.json().catch(() => ({} as any));
+      toast.error(err?.error ?? "Save failed");
+    }
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-10 space-y-6">
@@ -500,67 +570,7 @@ export default function NewProofPage() {
               <Button
                 ref={saveBtnRef}
                 variant="secondary"
-                onClick={async () => {
-                  if (!name.trim()) {
-                    toast.error("Please enter a proof name before saving");
-                    return;
-                  }
-                  if (status !== "authenticated") {
-                    toast.error("Please sign in to save proofs");
-                    window.location.href = "/sign-in?callbackUrl=/proofs/new";
-                    return;
-                  }
-                  const payload = {
-                    name,
-                    premises: premises.split(",").map((s) => s.trim()).filter(Boolean),
-                    conclusion,
-                    lines: lines.map((l) => ({
-                      lineNo: l.lineNo,
-                      formula: l.formula,
-                      rule: l.rule,
-                      refs: (l.refs ?? []).map((s) => String(s).trim()).filter(Boolean),
-                      depth: Number(l.depth ?? 0),
-                    })),
-                    rules: "tfl_basic",
-                  };
-                  const check = await fetch("/api/proof/validate", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload),
-                  });
-                  let validation: any = { ok: false };
-                  try {
-                    validation = await check.json();
-                  } catch {
-                    validation = { ok: false };
-                  }
-                  if (!validation.ok) {
-                    setResult(validation);
-                    toast.error("Cannot save: validation failed");
-                    return;
-                  }
-                  const save = await fetch("/api/proofs", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload),
-                  });
-                  if (save.ok) {
-                    try {
-                      const data = await save.json();
-                      setDirty(false);
-                      setLastSavedAt(new Date());
-                      window.location.href = `/proofs/${data.item.id}`;
-                    } catch {
-                      toast.warning("Saved, but response was invalid");
-                    }
-                  } else if (save.status === 401) {
-                    toast.error("Please sign in to save proofs");
-                    window.location.href = "/sign-in?callbackUrl=/proofs/new";
-                  } else {
-                    const err = await save.json().catch(() => ({} as any));
-                    toast.error(err?.error ?? "Save failed");
-                  }
-                }}
+                onClick={() => performSave()}
                 disabled={!allRequirementsMet}
                 title={!allRequirementsMet ? "Complete rule references before saving" : undefined}
               >
@@ -867,6 +877,51 @@ export default function NewProofPage() {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowReadableDialog(false)}>Close</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        
+        {/* Validation Modal */}
+        <Dialog open={showValidationModal} onOpenChange={setShowValidationModal}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Validation Failed</DialogTitle>
+              <DialogDescription>
+                Your proof doesn't pass validation. You can still save it as a draft, but it may contain logical errors.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="rounded-md border border-destructive/20 bg-destructive/5 p-4">
+                <h4 className="font-medium text-destructive mb-2">Validation Issues:</h4>
+                <ul className="text-sm text-destructive/80 space-y-1">
+                  {result?.lines?.filter((l: any) => !l.ok).map((l: any, idx: number) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <span className="font-mono text-xs">#{l.lineNo}:</span>
+                      <span>{l.messages?.join(", ") || "Invalid"}</span>
+                    </li>
+                  )) || <li>Unknown validation errors</li>}
+                </ul>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Do you want to save this proof anyway? You can return to edit it later.
+              </p>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowValidationModal(false)}>
+                Cancel
+              </Button>
+              <Button 
+                variant="destructive" 
+                onClick={() => {
+                  setShowValidationModal(false);
+                  if (pendingSave) {
+                    pendingSave();
+                    setPendingSave(null);
+                  }
+                }}
+              >
+                Save Anyway
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

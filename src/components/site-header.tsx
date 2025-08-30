@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useSession, signOut } from "next-auth/react";
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetBody } from "@/components/ui/sheet";
-import { HelpCircle, Keyboard, BookOpen, Layers, Settings } from "lucide-react";
+import { HelpCircle, Keyboard, BookOpen, Layers, Settings, X } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { BrowserExtensionSafe } from "@/components/browser-extension-safe";
@@ -21,8 +21,8 @@ export function SiteHeader() {
   const pathname = usePathname();
   const { status } = useSession();
   return (
-    <BrowserExtensionSafe>
-      <header className="sticky top-0 z-40 border-b bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <BrowserExtensionSafe className="fixed top-0 left-0 right-0 z-50 w-full">
+      <header className="w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-6">
         <Link href="/" className="font-semibold tracking-tight flex items-center gap-3" aria-label="LemmaLab home">
           <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border bg-card">
@@ -58,7 +58,16 @@ export function SiteHeader() {
             </Tooltip>
             <SheetContent side="right" className="w-full sm:w-[38rem] md:w-[44rem]">
               <SheetHeader>
-                <SheetTitle className="text-lg">Rules Reference</SheetTitle>
+                <div className="flex items-center justify-between">
+                  <SheetTitle className="text-lg">Rules Reference</SheetTitle>
+                  <button
+                    onClick={() => (document.querySelector('[aria-label="Rules"]') as HTMLElement)?.click()}
+                    className="inline-flex items-center justify-center h-8 w-8 rounded-full hover:bg-accent transition-colors"
+                    aria-label="Close rules panel"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
               </SheetHeader>
               <SheetBody>
                 <div className="space-y-8 text-sm">
@@ -194,7 +203,16 @@ export function SiteHeader() {
             </Tooltip>
             <SheetContent side="right">
               <SheetHeader>
-                <SheetTitle className="text-lg">Help & Tips</SheetTitle>
+                <div className="flex items-center justify-between">
+                  <SheetTitle className="text-lg">Help & Tips</SheetTitle>
+                  <button
+                    onClick={() => (document.querySelector('[aria-label="Help"]') as HTMLElement)?.click()}
+                    className="inline-flex items-center justify-center h-8 w-8 rounded-full hover:bg-accent transition-colors"
+                    aria-label="Close help panel"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
               </SheetHeader>
               <SheetBody>
                 <div className="space-y-6 text-sm">
