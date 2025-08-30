@@ -160,6 +160,7 @@ exports.Prisma.ProofScalarFieldEnum = {
   lemmasAllowed: 'lemmasAllowed',
   disproofString: 'disproofString',
   createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   isDeleted: 'isDeleted'
 };
 

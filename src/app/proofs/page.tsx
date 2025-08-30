@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { ProofsListClient } from "./ProofsListClient";
+import { NewProofButton } from "@/components/NewProofButton";
 
 async function getProofs() {
   const cookieStore = await cookies();
@@ -36,7 +37,7 @@ export default function ProofsPage() {
           <h1 className="text-2xl font-semibold">Your Proofs</h1>
           <p className="text-sm text-muted-foreground">Browse, edit, or start a new proof. Recently updated appear first.</p>
         </div>
-        <a className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90 border border-primary/60 w-fit" href="/proofs/new">New proof</a>
+        <NewProofButton className="w-fit" data-new-proof-btn />
       </div>
       <ProofsList />
     </div>

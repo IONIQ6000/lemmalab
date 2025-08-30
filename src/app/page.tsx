@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { NewProofButton } from "@/components/NewProofButton";
 import { Logo } from "@/components/logo";
 import { ArrowRight, Keyboard, Layers, ShieldCheck, Sparkles } from "lucide-react";
 
@@ -21,12 +22,9 @@ export default function Home() {
             Write formal proofs without wrestling the UI. LemmaLab stays out of your way and gives quick, accurate feedback as you go.
           </p>
           <div className="flex flex-wrap items-center gap-3">
-            <Link
-              href="/proofs/new"
-              className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90 border border-primary/60"
-            >
+            <NewProofButton className="inline-flex items-center gap-2" variant="default" data-new-proof-btn>
               New proof <ArrowRight className="h-4 w-4" />
-            </Link>
+            </NewProofButton>
             <Link
               href="/proofs"
               className="inline-flex items-center gap-2 rounded-md border px-4 py-2 hover:bg-accent"

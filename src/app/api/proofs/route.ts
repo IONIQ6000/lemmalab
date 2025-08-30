@@ -151,6 +151,8 @@ export async function PATCH(request: Request) {
           rules,
           premises: premises.join(", "),
           conclusion,
+          // ensure updatedAt advances even if scalar values did not change materially
+          updatedAt: new Date(),
           lines: {
             create: lines.map((l: any, index: number) => ({
               lineNo: String(l.lineNo),

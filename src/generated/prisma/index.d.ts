@@ -5991,6 +5991,7 @@ export namespace Prisma {
     lemmasAllowed: boolean | null
     disproofString: string | null
     createdAt: Date | null
+    updatedAt: Date | null
     isDeleted: boolean | null
   }
 
@@ -6005,6 +6006,7 @@ export namespace Prisma {
     lemmasAllowed: boolean | null
     disproofString: string | null
     createdAt: Date | null
+    updatedAt: Date | null
     isDeleted: boolean | null
   }
 
@@ -6019,6 +6021,7 @@ export namespace Prisma {
     lemmasAllowed: number
     disproofString: number
     createdAt: number
+    updatedAt: number
     isDeleted: number
     _all: number
   }
@@ -6035,6 +6038,7 @@ export namespace Prisma {
     lemmasAllowed?: true
     disproofString?: true
     createdAt?: true
+    updatedAt?: true
     isDeleted?: true
   }
 
@@ -6049,6 +6053,7 @@ export namespace Prisma {
     lemmasAllowed?: true
     disproofString?: true
     createdAt?: true
+    updatedAt?: true
     isDeleted?: true
   }
 
@@ -6063,6 +6068,7 @@ export namespace Prisma {
     lemmasAllowed?: true
     disproofString?: true
     createdAt?: true
+    updatedAt?: true
     isDeleted?: true
     _all?: true
   }
@@ -6150,6 +6156,7 @@ export namespace Prisma {
     lemmasAllowed: boolean
     disproofString: string | null
     createdAt: Date
+    updatedAt: Date
     isDeleted: boolean
     _count: ProofCountAggregateOutputType | null
     _min: ProofMinAggregateOutputType | null
@@ -6181,6 +6188,7 @@ export namespace Prisma {
     lemmasAllowed?: boolean
     disproofString?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     isDeleted?: boolean
     problem?: boolean | Proof$problemArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
@@ -6201,6 +6209,7 @@ export namespace Prisma {
     lemmasAllowed?: boolean
     disproofString?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     isDeleted?: boolean
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["proof"]>
@@ -6216,6 +6225,7 @@ export namespace Prisma {
     lemmasAllowed?: boolean
     disproofString?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     isDeleted?: boolean
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["proof"]>
@@ -6231,10 +6241,11 @@ export namespace Prisma {
     lemmasAllowed?: boolean
     disproofString?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     isDeleted?: boolean
   }
 
-  export type ProofOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "rules" | "premises" | "conclusion" | "createdById" | "complete" | "lemmasAllowed" | "disproofString" | "createdAt" | "isDeleted", ExtArgs["result"]["proof"]>
+  export type ProofOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "rules" | "premises" | "conclusion" | "createdById" | "complete" | "lemmasAllowed" | "disproofString" | "createdAt" | "updatedAt" | "isDeleted", ExtArgs["result"]["proof"]>
   export type ProofInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     problem?: boolean | Proof$problemArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
@@ -6270,6 +6281,7 @@ export namespace Prisma {
       lemmasAllowed: boolean
       disproofString: string | null
       createdAt: Date
+      updatedAt: Date
       isDeleted: boolean
     }, ExtArgs["result"]["proof"]>
     composites: {}
@@ -6709,6 +6721,7 @@ export namespace Prisma {
     readonly lemmasAllowed: FieldRef<"Proof", 'Boolean'>
     readonly disproofString: FieldRef<"Proof", 'String'>
     readonly createdAt: FieldRef<"Proof", 'DateTime'>
+    readonly updatedAt: FieldRef<"Proof", 'DateTime'>
     readonly isDeleted: FieldRef<"Proof", 'Boolean'>
   }
     
@@ -19586,6 +19599,7 @@ export namespace Prisma {
     lemmasAllowed: 'lemmasAllowed',
     disproofString: 'disproofString',
     createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
     isDeleted: 'isDeleted'
   };
 
@@ -20078,6 +20092,7 @@ export namespace Prisma {
     lemmasAllowed?: BoolFilter<"Proof"> | boolean
     disproofString?: StringNullableFilter<"Proof"> | string | null
     createdAt?: DateTimeFilter<"Proof"> | Date | string
+    updatedAt?: DateTimeFilter<"Proof"> | Date | string
     isDeleted?: BoolFilter<"Proof"> | boolean
     problem?: XOR<ProblemNullableScalarRelationFilter, ProblemWhereInput> | null
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -20097,6 +20112,7 @@ export namespace Prisma {
     lemmasAllowed?: SortOrder
     disproofString?: SortOrderInput | SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     isDeleted?: SortOrder
     problem?: ProblemOrderByWithRelationInput
     createdBy?: UserOrderByWithRelationInput
@@ -20119,6 +20135,7 @@ export namespace Prisma {
     lemmasAllowed?: BoolFilter<"Proof"> | boolean
     disproofString?: StringNullableFilter<"Proof"> | string | null
     createdAt?: DateTimeFilter<"Proof"> | Date | string
+    updatedAt?: DateTimeFilter<"Proof"> | Date | string
     isDeleted?: BoolFilter<"Proof"> | boolean
     problem?: XOR<ProblemNullableScalarRelationFilter, ProblemWhereInput> | null
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -20138,6 +20155,7 @@ export namespace Prisma {
     lemmasAllowed?: SortOrder
     disproofString?: SortOrderInput | SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     isDeleted?: SortOrder
     _count?: ProofCountOrderByAggregateInput
     _max?: ProofMaxOrderByAggregateInput
@@ -20158,6 +20176,7 @@ export namespace Prisma {
     lemmasAllowed?: BoolWithAggregatesFilter<"Proof"> | boolean
     disproofString?: StringNullableWithAggregatesFilter<"Proof"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Proof"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Proof"> | Date | string
     isDeleted?: BoolWithAggregatesFilter<"Proof"> | boolean
   }
 
@@ -21181,6 +21200,7 @@ export namespace Prisma {
     lemmasAllowed?: boolean
     disproofString?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
     isDeleted?: boolean
     problem?: ProblemCreateNestedOneWithoutProofInput
     createdBy: UserCreateNestedOneWithoutProofsInput
@@ -21200,6 +21220,7 @@ export namespace Prisma {
     lemmasAllowed?: boolean
     disproofString?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
     isDeleted?: boolean
     problem?: ProblemUncheckedCreateNestedOneWithoutProofInput
     lines?: ProofLineUncheckedCreateNestedManyWithoutProofInput
@@ -21217,6 +21238,7 @@ export namespace Prisma {
     lemmasAllowed?: BoolFieldUpdateOperationsInput | boolean
     disproofString?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     problem?: ProblemUpdateOneWithoutProofNestedInput
     createdBy?: UserUpdateOneRequiredWithoutProofsNestedInput
@@ -21236,6 +21258,7 @@ export namespace Prisma {
     lemmasAllowed?: BoolFieldUpdateOperationsInput | boolean
     disproofString?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     problem?: ProblemUncheckedUpdateOneWithoutProofNestedInput
     lines?: ProofLineUncheckedUpdateManyWithoutProofNestedInput
@@ -21254,6 +21277,7 @@ export namespace Prisma {
     lemmasAllowed?: boolean
     disproofString?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
     isDeleted?: boolean
   }
 
@@ -21267,6 +21291,7 @@ export namespace Prisma {
     lemmasAllowed?: BoolFieldUpdateOperationsInput | boolean
     disproofString?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
@@ -21281,6 +21306,7 @@ export namespace Prisma {
     lemmasAllowed?: BoolFieldUpdateOperationsInput | boolean
     disproofString?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
@@ -22414,6 +22440,7 @@ export namespace Prisma {
     lemmasAllowed?: SortOrder
     disproofString?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     isDeleted?: SortOrder
   }
 
@@ -22428,6 +22455,7 @@ export namespace Prisma {
     lemmasAllowed?: SortOrder
     disproofString?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     isDeleted?: SortOrder
   }
 
@@ -22442,6 +22470,7 @@ export namespace Prisma {
     lemmasAllowed?: SortOrder
     disproofString?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     isDeleted?: SortOrder
   }
 
@@ -24527,6 +24556,7 @@ export namespace Prisma {
     lemmasAllowed?: boolean
     disproofString?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
     isDeleted?: boolean
     problem?: ProblemCreateNestedOneWithoutProofInput
     lines?: ProofLineCreateNestedManyWithoutProofInput
@@ -24544,6 +24574,7 @@ export namespace Prisma {
     lemmasAllowed?: boolean
     disproofString?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
     isDeleted?: boolean
     problem?: ProblemUncheckedCreateNestedOneWithoutProofInput
     lines?: ProofLineUncheckedCreateNestedManyWithoutProofInput
@@ -24725,6 +24756,7 @@ export namespace Prisma {
     lemmasAllowed?: BoolFilter<"Proof"> | boolean
     disproofString?: StringNullableFilter<"Proof"> | string | null
     createdAt?: DateTimeFilter<"Proof"> | Date | string
+    updatedAt?: DateTimeFilter<"Proof"> | Date | string
     isDeleted?: BoolFilter<"Proof"> | boolean
   }
 
@@ -25588,6 +25620,7 @@ export namespace Prisma {
     lemmasAllowed?: boolean
     disproofString?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
     isDeleted?: boolean
     problem?: ProblemCreateNestedOneWithoutProofInput
     createdBy: UserCreateNestedOneWithoutProofsInput
@@ -25606,6 +25639,7 @@ export namespace Prisma {
     lemmasAllowed?: boolean
     disproofString?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
     isDeleted?: boolean
     problem?: ProblemUncheckedCreateNestedOneWithoutProofInput
     responses?: ResponseTrackerUncheckedCreateNestedManyWithoutProofInput
@@ -25638,6 +25672,7 @@ export namespace Prisma {
     lemmasAllowed?: BoolFieldUpdateOperationsInput | boolean
     disproofString?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     problem?: ProblemUpdateOneWithoutProofNestedInput
     createdBy?: UserUpdateOneRequiredWithoutProofsNestedInput
@@ -25656,6 +25691,7 @@ export namespace Prisma {
     lemmasAllowed?: BoolFieldUpdateOperationsInput | boolean
     disproofString?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     problem?: ProblemUncheckedUpdateOneWithoutProofNestedInput
     responses?: ResponseTrackerUncheckedUpdateManyWithoutProofNestedInput
@@ -25672,6 +25708,7 @@ export namespace Prisma {
     lemmasAllowed?: boolean
     disproofString?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
     isDeleted?: boolean
     createdBy: UserCreateNestedOneWithoutProofsInput
     lines?: ProofLineCreateNestedManyWithoutProofInput
@@ -25690,6 +25727,7 @@ export namespace Prisma {
     lemmasAllowed?: boolean
     disproofString?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
     isDeleted?: boolean
     lines?: ProofLineUncheckedCreateNestedManyWithoutProofInput
     responses?: ResponseTrackerUncheckedCreateNestedManyWithoutProofInput
@@ -25787,6 +25825,7 @@ export namespace Prisma {
     lemmasAllowed?: BoolFieldUpdateOperationsInput | boolean
     disproofString?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     createdBy?: UserUpdateOneRequiredWithoutProofsNestedInput
     lines?: ProofLineUpdateManyWithoutProofNestedInput
@@ -25805,6 +25844,7 @@ export namespace Prisma {
     lemmasAllowed?: BoolFieldUpdateOperationsInput | boolean
     disproofString?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     lines?: ProofLineUncheckedUpdateManyWithoutProofNestedInput
     responses?: ResponseTrackerUncheckedUpdateManyWithoutProofNestedInput
@@ -26330,6 +26370,7 @@ export namespace Prisma {
     lemmasAllowed?: boolean
     disproofString?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
     isDeleted?: boolean
     problem?: ProblemCreateNestedOneWithoutProofInput
     createdBy: UserCreateNestedOneWithoutProofsInput
@@ -26348,6 +26389,7 @@ export namespace Prisma {
     lemmasAllowed?: boolean
     disproofString?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
     isDeleted?: boolean
     problem?: ProblemUncheckedCreateNestedOneWithoutProofInput
     lines?: ProofLineUncheckedCreateNestedManyWithoutProofInput
@@ -26483,6 +26525,7 @@ export namespace Prisma {
     lemmasAllowed?: BoolFieldUpdateOperationsInput | boolean
     disproofString?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     problem?: ProblemUpdateOneWithoutProofNestedInput
     createdBy?: UserUpdateOneRequiredWithoutProofsNestedInput
@@ -26501,6 +26544,7 @@ export namespace Prisma {
     lemmasAllowed?: BoolFieldUpdateOperationsInput | boolean
     disproofString?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     problem?: ProblemUncheckedUpdateOneWithoutProofNestedInput
     lines?: ProofLineUncheckedUpdateManyWithoutProofNestedInput
@@ -26548,6 +26592,7 @@ export namespace Prisma {
     lemmasAllowed?: boolean
     disproofString?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
     isDeleted?: boolean
     problem?: ProblemCreateNestedOneWithoutProofInput
     createdBy: UserCreateNestedOneWithoutProofsInput
@@ -26566,6 +26611,7 @@ export namespace Prisma {
     lemmasAllowed?: boolean
     disproofString?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
     isDeleted?: boolean
     problem?: ProblemUncheckedCreateNestedOneWithoutProofInput
     lines?: ProofLineUncheckedCreateNestedManyWithoutProofInput
@@ -26639,6 +26685,7 @@ export namespace Prisma {
     lemmasAllowed?: BoolFieldUpdateOperationsInput | boolean
     disproofString?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     problem?: ProblemUpdateOneWithoutProofNestedInput
     createdBy?: UserUpdateOneRequiredWithoutProofsNestedInput
@@ -26657,6 +26704,7 @@ export namespace Prisma {
     lemmasAllowed?: BoolFieldUpdateOperationsInput | boolean
     disproofString?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     problem?: ProblemUncheckedUpdateOneWithoutProofNestedInput
     lines?: ProofLineUncheckedUpdateManyWithoutProofNestedInput
@@ -27046,6 +27094,7 @@ export namespace Prisma {
     lemmasAllowed?: boolean
     disproofString?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
     isDeleted?: boolean
   }
 
@@ -27114,6 +27163,7 @@ export namespace Prisma {
     lemmasAllowed?: BoolFieldUpdateOperationsInput | boolean
     disproofString?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     problem?: ProblemUpdateOneWithoutProofNestedInput
     lines?: ProofLineUpdateManyWithoutProofNestedInput
@@ -27131,6 +27181,7 @@ export namespace Prisma {
     lemmasAllowed?: BoolFieldUpdateOperationsInput | boolean
     disproofString?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     problem?: ProblemUncheckedUpdateOneWithoutProofNestedInput
     lines?: ProofLineUncheckedUpdateManyWithoutProofNestedInput
@@ -27148,6 +27199,7 @@ export namespace Prisma {
     lemmasAllowed?: BoolFieldUpdateOperationsInput | boolean
     disproofString?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 

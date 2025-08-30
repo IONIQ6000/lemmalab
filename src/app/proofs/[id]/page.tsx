@@ -11,6 +11,8 @@ type Proof = {
   rules: string;
   premises: string | null;
   lines: Array<{ id: string; lineNo: string; formula: string | null; rule: string | null; depth?: number; refs?: string[] }>;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export default function ProofDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -85,6 +87,19 @@ export default function ProofDetailPage({ params }: { params: Promise<{ id: stri
         <div>
           <h1 className="text-2xl font-semibold">{proof.name ?? `Proof ${proof.id.slice(0, 6)}`}</h1>
           <div className="text-sm text-muted-foreground">Rules: {proof.rules}</div>
+          <div className="text-xs text-muted-foreground mt-1">
+            Created: {(() => {
+              const d = proof.createdAt ? new Date(proof.createdAt) : null;
+              return d && !isNaN(d.getTime()) ? d.toLocaleString() : "—";
+            })()}
+          </div>
+          <div className="text-xs text-muted-foreground">
+            Last edited: {(() => {
+              const raw = proof.updatedAt ?? proof.createdAt ?? null;
+              const d = raw ? new Date(raw) : null;
+              return d && !isNaN(d.getTime()) ? d.toLocaleString() : "—";
+            })()}
+          </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <a href={`/proofs/${proof.id}/edit`} className="inline-flex items-center rounded-md border px-3 py-1.5 text-sm hover:bg-accent">Edit</a>

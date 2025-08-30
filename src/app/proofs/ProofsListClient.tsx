@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { NewProofButton } from "@/components/NewProofButton";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,9 +40,7 @@ export function ProofsListClient({ items }: ProofsListClientProps) {
           <p className="text-sm text-muted-foreground text-center mb-4">
             Create your first proof to get started with LemmaLab.
           </p>
-          <Link href="/proofs/new">
-            <Button>Create your first proof</Button>
-          </Link>
+          <NewProofButton>Create your first proof</NewProofButton>
         </CardContent>
       </Card>
     );

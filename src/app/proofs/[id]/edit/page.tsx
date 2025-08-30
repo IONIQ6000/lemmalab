@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Plus, Trash2, FileText } from "lucide-react";
+import { Plus, Trash2, FileText, Download } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
@@ -69,6 +69,25 @@ export default function EditProofPage() {
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [pendingSave, setPendingSave] = useState<(() => void) | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const createdAtRef = useRef<number | null>(null);
+  const updatedAtRef = useRef<number | null>(null);
+  
+  function downloadReadable() {
+    const text = [
+      `Name: ${name}`,
+      `Premises: ${premises}`,
+      `Conclusion: ${conclusion}`,
+      "Lines:",
+      ...lines.map((l) => `${l.lineNo}\t${" ".repeat((l.depth ?? 0) * 2)}${l.formula}\t${l.rule ?? "Premise"}\t${(l.refs ?? []).join(",")}`),
+    ].join("\n");
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${name || "proof"}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   const validationByLineNo = useMemo(() => {
     const map = new Map<string, { ok: boolean; messages: string[] }>();
@@ -116,6 +135,9 @@ export default function EditProofPage() {
         setName(item?.name ?? "");
         setPremises(item?.premises ?? "");
         setConclusion(item?.conclusion ?? "");
+        createdAtRef.current = item?.createdAt ? Date.parse(item.createdAt) : Date.now();
+        updatedAtRef.current = item?.updatedAt ? Date.parse(item.updatedAt) : createdAtRef.current;
+        if (updatedAtRef.current) setLastSavedAt(new Date(updatedAtRef.current));
         const mapped: Line[] = (item?.lines ?? []).map((l: any) => ({
           lineNo: String(l.lineNo),
           formula: l.formula ?? "",
@@ -160,8 +182,10 @@ export default function EditProofPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
+        setLastSavedAt(new Date());
+        setDirty(false);
         setSavedVisible(true);
-        setTimeout(() => setSavedVisible(false), 2500);
+        setTimeout(() => setSavedVisible(false), 1200);
       } catch (error) {
         console.error("Auto-save failed:", error);
         toast.error("Auto-save failed");
@@ -320,7 +344,11 @@ export default function EditProofPage() {
 
   return (
     <div className="mx-auto w-full max-w-7xl px-3 sm:px-6 py-6 sm:py-10 space-y-6">
-      <h1 className="text-2xl font-semibold">Edit Proof</h1>
+      <div>
+        <h1 className="text-2xl font-semibold">Edit Proof</h1>
+        <div className="mt-1 text-xs text-muted-foreground">Created: {createdAtRef.current ? new Date(createdAtRef.current).toLocaleString() : "—"}</div>
+        <div className="text-xs text-muted-foreground">Last edited: {lastSavedAt ? lastSavedAt.toLocaleString() : (updatedAtRef.current ? new Date(updatedAtRef.current).toLocaleString() : "—")}</div>
+      </div>
       <div className="bg-gradient-to-br from-muted/20 to-muted/10 border rounded-xl p-6 space-y-6">
         <div className="space-y-1">
           <h2 className="text-lg font-semibold text-foreground">Proof Details</h2>
@@ -420,11 +448,13 @@ export default function EditProofPage() {
                   )}
                 </PopoverContent>
               </Popover>
-              <div className={`transition-opacity duration-700 ease-in-out ${savedVisible ? "opacity-100" : "opacity-0"}`}>
-                <span className="inline-flex items-center gap-2 rounded-md border px-3 py-1 text-xs bg-green-50 text-green-700 border-green-200">
-                  <span className="size-2 animate-pulse rounded-full bg-green-500" /> Saved
-                </span>
+              <div className={`pointer-events-none text-xs text-muted-foreground transition-opacity duration-500 ${savedVisible ? "opacity-100" : "opacity-0"}`}>
+                Saved
               </div>
+              <Button variant="outline" onClick={downloadReadable} className="h-9 inline-flex items-center gap-2">
+                <Download className="h-4 w-4" />
+                Download
+              </Button>
             </div>
           </div>
           <div className="flex flex-wrap items-center justify-between gap-3">

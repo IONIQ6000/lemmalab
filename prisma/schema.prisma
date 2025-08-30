@@ -61,6 +61,7 @@ model Proof {
   lemmasAllowed   Boolean                 @default(false)
   disproofString  String?
   createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @default(now()) @updatedAt
   isDeleted       Boolean                 @default(false)
   problem         Problem?
   createdBy       User                    @relation("UserProofs", fields: [createdById], references: [id])
